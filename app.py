@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_restful import Resource, Api
-from checklanguage import identity
+from checklanguage import identify
 
 app=Flask(__name__)
 app.config['SECRET_KEY']='SECRET_KEY'
@@ -20,6 +20,7 @@ class LanguageForm(FlaskForm):
 def index():
     phrase=None
     language=None
+    language_full=None
     form=LanguageForm()
     if form.validate_on_submit():
         phrase=form.language.data

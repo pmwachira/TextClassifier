@@ -4,17 +4,19 @@ import matplotlib.pyplot as plt
 from sklearn.externals import joblib
 from sklearn.metrics import confusion_matrix
 
-CLASSIFIER=joblib.load('model/classifier.pkl')
-TDIDF_TRANSFORMER=joblib.load('model/tdidf_transformer.pkl')
-COUNT_VECT=joblib.load('model/count_vect.pkl')
+CLASSIFIER=joblib.load('classifier.pkl')
+TDIDF_TRANSFORMER=joblib.load('tdidf_transformer.pkl')
+COUNT_VECT=joblib.load('count_vect.pkl')
 
 LANGUAGES=['en','sv','de','fr','nl','ru','it','es','pl','vi','pt','uk','fa','sco']
 
 TEST_DATA=[]
 
 for language in LANGUAGES:
+
     TEST_DATA.append(
-        np.array([open('scraper/data/'+language+'/TEST_SET.db').read()])
+
+        np.array([open('../scraper/data/'+language+'/test.db').read()])
     )
 
 

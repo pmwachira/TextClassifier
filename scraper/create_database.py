@@ -3,8 +3,11 @@ from os import listdir
 from os.path import join
 from get_data import GetArticles, Database
 import sys
+import os
+import codecs
+
 sys.path.append('..')
-from languages import LANGUAGES
+from languages import LANGUAGES,ENCODINGS
 
 WORDS=40000
 DATABASE_LOCATION='data'
@@ -20,10 +23,12 @@ class DataBaseWriter(object):
         contents=listdir(language_data_folder)
         articles=[article for article in contents if article[-3:]=='txt']
         for article in articles:
-            with open(join(language_data_folder,article),'r') as text:
-                for line in text:
-                    for _ in line.split(' '):
-                        words+=1
+            types_of_encoding = ENCODINGS
+            for encoding_type in types_of_encoding:
+               with codecs.open(join(language_data_folder,article),'r',encoding=encoding_type,errors ='ignore') as text:
+                    for line in text:
+                        for _ in line.split(' '):
+                            words+=1
 
 
         return words
@@ -34,20 +39,26 @@ class DataBaseWriter(object):
         contents=listdir(language_data_folder)
         articles=[article for article in contents if article[-3:]=='txt']
         for article in articles:
-            with open(join(language_data_folder,article),'r') as text:
-                for line in text:
-                    for word in line.split(' '):
-                        words.append(word)
+            types_of_encoding = ENCODINGS
+            for encoding_type in types_of_encoding:
+                with codecs.open(join(language_data_folder,article),'r',encoding=encoding_type,errors ='ignore') as text:
+                    for line in text:
+                        for word in line.split(' '):
+                            words.append(word)
 
         return words
 
     def dbwrite(self,language, sql_database, words):
-        print ('checking '+language+' articles')
+
         language_data_folder=join(self.db_root_location,language)
-        train_ratio=.9
+        print('checking ' + language + ' articles')
+        train_ratio=0.9
+
 
         if language not in listdir(self.db_root_location):
-            subprocess.run(["mkdir",language_data_folder])
+            print(language_data_folder+' not exist')
+            ##subprocess.check_call(['mkdir',language_data_folder]) // research on why non responsive
+            os.mkdir(language_data_folder)
 
         while self._count_words_in_language(language)<words:
             print ('....downloading more words..not enough: ',self._count_words_in_language(language))

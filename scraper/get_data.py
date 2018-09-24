@@ -2,6 +2,8 @@ import re
 import json
 import requests
 from sqlalchemy import Table, Column, Text, String, MetaData, create_engine
+import codecs
+from languages import ENCODINGS
 
 class GetArticles(object):
     def __init__(self):
@@ -42,7 +44,7 @@ class GetArticles(object):
                 continue
 
             def clean(text):
-                match_tag=re.recompiler(r'(<[^>]+>|\[\d+\]|[,.\'\"()])')
+                match_tag=re.compile(r'(<[^>]+>|\[\d+\]|[,.\'\"()])')
                 return match_tag.sub('',text)
 
             yield title, clean(text_body)
@@ -54,8 +56,9 @@ class GetArticles(object):
 
         for title, text in text_list:
             title=''.join(x for x in title if x.isalnum())
-            with open(db_location+'/'+title+'.txt','w+') as wikipedia_file:
-                wikipedia_file.write(text)
+            for enc_type in ENCODINGS:
+                with codecs.open(db_location+'/'+title+'.txt','w+',errors ='ignore',encoding=enc_type) as wikipedia_file:
+                    wikipedia_file.write(text)
 
 class Database(object):
     def __init__(self,database_name):
@@ -76,7 +79,7 @@ class Database(object):
         conn= self.engine.connect()
 
         del1= self.train.delete().where(self.train.columns.language==language)
-        del2= self.train.delete().where(self.test.columns.language==language)
+        del2= self.test.delete().where(self.test.columns.language==language)
 
         conn.execute(del1)
         conn.execute(del2)
@@ -86,10 +89,11 @@ class Database(object):
             text=test_text
         )
 
-        ins2=self.test.insert.values(
+        ins2=self.test.insert().values(
             language=language,
             text=test_text
         )
 
         conn.execute(ins1)
         conn.execute(ins2)
+

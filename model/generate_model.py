@@ -3,12 +3,13 @@ from sklearn.feature_extraction.text import CountVectorizer,TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
+import os
 
 LANGUAGES=['en','sv','de','fr','nl','ru','it','es','pl','vi','pt','uk','fa','sco']
 
 TRAINING_DATA=[]
 
-db=create_engine('sqlite:///scraper/language_data.db')
+db=create_engine('sqlite:///../scraper/language_data.db')
 conn=db.connect()
 res=conn.execute('select * from train')
 for row in res:
@@ -26,6 +27,6 @@ TRAIN_TFIDF=TFIDF_TRANSFORMER.fit_transform(TRAIN_COUNTS)
 
 CLASSIFIER=MultinomialNB().fit(TRAIN_TFIDF,TARGETS)
 
-joblib.dump(COUNT_VECT,'model/count_vect.pkl')
-joblib.dump(TFIDF_TRANSFORMER,'model/tdidf_transformer.pkl')
-joblib.dump(CLASSIFIER,'model/classifier.pkl')
+joblib.dump(COUNT_VECT,'count_vect.pkl')
+joblib.dump(TFIDF_TRANSFORMER,'tdidf_transformer.pkl')
+joblib.dump(CLASSIFIER,'classifier.pkl')
