@@ -63,6 +63,7 @@ class GetArticles(object):
 class Database(object):
     def __init__(self,database_name):
         self.engine = create_engine('sqlite:///'+database_name+'.db')
+                 # db = create_engine('sqlite:///../scraper/language_data.db')
         self.metadata=MetaData()
 
         self.train = Table('train',self.metadata,
@@ -86,7 +87,7 @@ class Database(object):
 
         ins1=self.train.insert().values(
             language=language,
-            text=test_text
+            text=training_text
         )
 
         ins2=self.test.insert().values(

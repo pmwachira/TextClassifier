@@ -16,13 +16,13 @@ for language in LANGUAGES:
 
     TEST_DATA.append(
 
-        np.array([open('../scraper/data/'+language+'/test.db').read()])
+        np.array([open('scraper/data/' + language + '/TEST_SET.db').read()])
     )
 
 
 def get_chunks(lang, size=30):
     for i in range(0,len(lang),size):
-        yield ' '.join(lang[i+i +size])
+        yield ' '.join(lang[i:i + size])
 
 
 ACTUAL=[]
@@ -39,7 +39,9 @@ for language in TEST_DATA:
 
     TEST_COUNTS=COUNT_VECT.transform(chunks)
     TEST_TFIDF=TDIDF_TRANSFORMER.transform(TEST_COUNTS)
-    PREDICTED=CLASSIFIER.predict(TEST_TFIDF)
+    PREDICTED_=CLASSIFIER.predict(TEST_TFIDF)
+
+    PREDICTED.extend(PREDICTED_)
 
     for chunk in chunks:
         ACTUAL.append(index)
